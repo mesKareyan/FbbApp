@@ -42,10 +42,6 @@ class LoginManager {
         }
     }
     
-    static func loginWith(firebaseUser: FirebaseAuth.User) {
-        
-    }
-    
     static func logOut(completion: @escaping LoginCompletion) {
         let firebaseAuth = Auth.auth()
         do {
@@ -87,7 +83,6 @@ class LoginManager {
                 completion(.failure(error))
             case .success(data: let fbUserInfo):
                 FirebaseDatabaseManager
-                    .shared
                     .updateUserInfo(firebaseInfo: firebaseUser,facebookInfo: fbUserInfo)
                     { userInfo in
                         currentUser = userInfo

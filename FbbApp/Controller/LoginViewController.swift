@@ -11,10 +11,6 @@ import Firebase
 import FirebaseAuth
 import FBSDKLoginKit
 
-enum Segue: String {
-    case openUsersList
-}
-
 class LoginViewController: UIViewController {
     
     @IBOutlet weak var coverView: UIView!
@@ -43,6 +39,7 @@ class LoginViewController: UIViewController {
     func createFBLoginButton() {
         let loginButton = FBSDKLoginButton()
         loginButton.delegate = self
+        loginButton.loginBehavior = .web
         self.contentView.addSubview(loginButton)
         loginButton.translatesAutoresizingMaskIntoConstraints = false
         loginButton

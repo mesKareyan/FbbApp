@@ -10,6 +10,7 @@ import UIKit
 class UsersTableViewController: UITableViewController {
     
     var users: [UserInfo]!
+    var selectedIndex: Int!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,7 +29,7 @@ class UsersTableViewController: UITableViewController {
     }
     
     func loadUsers() {
-        FirebaseDatabaseManager.shared.getUserslist { (users) in
+        FirebaseDatabaseManager.getUserslist { (users) in
             self.users = users
             self.tableView.reloadData()
         }
@@ -92,8 +93,21 @@ class UsersTableViewController: UITableViewController {
         return  isUserInCurrentUserFollowings ? [unfollowAction] : [followAction]
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.selectedIndex = indexPath.section
+        self.performSegue(withIdentifier: Segue.openChat.rawValue, sender: nil)
+    }
+    
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let segueID = segue.identifier else {
+            return
+        }
+        if segueID == Segue.openChat.rawValue {
+            let chatController = segue.destination as! ChatViewController
+            chatController.user = users[selectedIndex]
+        }
+        
     }
 
 

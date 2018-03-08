@@ -10,27 +10,35 @@ import Foundation
 import FirebaseAuth
 import FirebaseDatabase
 
-class FirebaseDatabaseManager {
+struct Refs {
     
-    struct ReferencePath {
+    private init() {}
+    
+    struct Path {
         private init(){}
         static let users = "users"
         static let followings = "followings"
+        static let chats = "chats"
+        static let chat_participants_list = "chat_participants_list"
     }
     
     //refs
-    let dbReference: DatabaseReference
-    let usersReference: DatabaseReference
+    static let dbReference = Database.database().reference()
+    static let usersReference = Database.database().reference(withPath: Path.users)
+    static let chatReference = Database.database().reference(withPath: Path.chats)
+    static let participantsListReference = Database.database().reference(withPath: Path.chat_participants_list)
     
+}
+
+class FirebaseDatabaseManager {
+    
+
     private init() {
-        dbReference = Database.database().reference()
-        usersReference = Database.database()
-            .reference(withPath: ReferencePath.users)
     }
     
-    static let shared = FirebaseDatabaseManager()
     
-    func updateUserInfo(firebaseInfo: FirebaseAuth.User,
+    
+    static func updateUserInfo(firebaseInfo: FirebaseAuth.User,
                         facebookInfo: UserInfo,
                         comletion:@escaping (_ updatedInfo: UserInfo) -> ()) {
         user(forID: firebaseInfo.uid) { ref in
@@ -47,10 +55,15 @@ class FirebaseDatabaseManager {
         }
     }
     
-    func getUserslist(usersList: @escaping ([UserInfo]) ->()) {
-        usersReference.observeSingleEvent(of: .value) { (snap) in
-            let users = snap.children.map {
-                UserInfo(snapshot: $0 as! DataSnapshot)!
+    static func getUserslist(usersList: @escaping ([UserInfo]) ->()) {
+        Refs.usersReference.observeSingleEvent(of: .value) { (snap) in
+            var users: [UserInfo] = []
+            snap.children.forEach { snapItem in
+                let snp = snapItem as! DataSnapshot
+                let user =  UserInfo(snapshot: snp)!
+                if user.id != LoginManager.currentUser.id {
+                    users.append(user)
+                }
             }
             DispatchQueue.main.async {
                 usersList(users)
@@ -58,29 +71,30 @@ class FirebaseDatabaseManager {
         }
     }
     
-    private func createUser(with userInfo: UserInfo) {
+    private static func createUser(with userInfo: UserInfo) {
         guard !userInfo.id.isEmpty else {
             assert(false, "userInfo is incorrect: \(userInfo)")
         }
-        let userRef = usersReference.child(userInfo.id)
+        let userRef = Refs.usersReference.child(userInfo.id)
         userRef.setValue(userInfo.dictRepresentation)
+        userRef.child("chats").setValue("")
     }
         
-    private func updateUser(with userInfo: UserInfo) {
+    private static func updateUser(with userInfo: UserInfo) {
         guard !userInfo.id.isEmpty else {
             assert(false, "userInfo is incorrect: \(userInfo)")
         }
-        let userRef = usersReference.child(userInfo.id)
+        let userRef = Refs.usersReference.child(userInfo.id)
         userRef.updateChildValues(["name": userInfo.name, "photo" : userInfo.photoURL])
         updateFollowings(userInfo: userInfo)
     }
 
-    private func user(forID userUID: String,
+    private static func user(forID userUID: String,
               result: @escaping ((DatabaseReference?) ->())) {
-        usersReference.observeSingleEvent(of: .value) { (snap) in
+        Refs.usersReference.observeSingleEvent(of: .value) { (snap) in
             if snap.hasChild(userUID) {
                 //user is exists
-                let ref = self.usersReference.child(userUID)
+                let ref = Refs.usersReference.child(userUID)
                 result(ref)
             } else {
                 //new user
@@ -89,8 +103,8 @@ class FirebaseDatabaseManager {
         }
     }
     
-    func updateFollowings(userInfo: UserInfo) {
-        let userRef = usersReference.child(userInfo.id)
+    static func updateFollowings(userInfo: UserInfo) {
+        let userRef = Refs.usersReference.child(userInfo.id)
         userRef.observeSingleEvent(of: .value) { (snapshot) in
             if let newUserInfo = UserInfo(snapshot: snapshot) {
                 userInfo.updateFallowings(ids: newUserInfo.followingIds)
@@ -98,16 +112,16 @@ class FirebaseDatabaseManager {
         }
     }
     
-    func user(user: UserInfo, followUser: UserInfo) {
-        let userRef = usersReference.child(user.id)
-        let followers = userRef.child(ReferencePath.followings)
+    static func user(user: UserInfo, followUser: UserInfo) {
+        let userRef = Refs.usersReference.child(user.id)
+        let followers = userRef.child(Refs.Path.followings)
         followers.child(followUser.id).setValue(followUser.name)
         self.updateFollowings(userInfo: user)
     }
     
-    func user(user: UserInfo, unfollowUser: UserInfo) {
-        let userRef = usersReference.child(user.id)
-        let followers = userRef.child(ReferencePath.followings)
+    static func user(user: UserInfo, unfollowUser: UserInfo) {
+        let userRef = Refs.usersReference.child(user.id)
+        let followers = userRef.child(Refs.Path.followings)
         let unfollowRef = followers.child(unfollowUser.id)
         unfollowRef.removeValue()
         self.updateFollowings(userInfo: user)

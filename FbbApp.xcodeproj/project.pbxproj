@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B20EC3432051B23700649C94 /* ChatManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20EC3422051B23700649C94 /* ChatManager.swift */; };
+		B20EC3452051CC5300649C94 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20EC3442051CC5300649C94 /* ChatViewController.swift */; };
+		B20EC3472051D69A00649C94 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20EC3462051D69A00649C94 /* Message.swift */; };
+		B20EC3492051D9E500649C94 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20EC3482051D9E500649C94 /* Constants.swift */; };
 		B27115DA2050622700B37759 /* LoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115D92050622700B37759 /* LoginManager.swift */; };
 		B27115E320506FB800B37759 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115E220506FB800B37759 /* UserInfo.swift */; };
 		B27115E5205102CE00B37759 /* FirebaseDatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115E4205102CE00B37759 /* FirebaseDatabaseManager.swift */; };
@@ -23,6 +27,10 @@
 
 /* Begin PBXFileReference section */
 		58E89ACC6BDF15E96F948C3A /* Pods-FbbApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FbbApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FbbApp/Pods-FbbApp.debug.xcconfig"; sourceTree = "<group>"; };
+		B20EC3422051B23700649C94 /* ChatManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatManager.swift; sourceTree = "<group>"; };
+		B20EC3442051CC5300649C94 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		B20EC3462051D69A00649C94 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		B20EC3482051D9E500649C94 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B27115D92050622700B37759 /* LoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginManager.swift; sourceTree = "<group>"; };
 		B27115E220506FB800B37759 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		B27115E4205102CE00B37759 /* FirebaseDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDatabaseManager.swift; sourceTree = "<group>"; };
@@ -93,6 +101,7 @@
 			children = (
 				B27AB639205040DA005AD577 /* LoginViewController.swift */,
 				B27115E82051223300B37759 /* UsersTableViewController.swift */,
+				B20EC3442051CC5300649C94 /* ChatViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -101,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				B27115E220506FB800B37759 /* UserInfo.swift */,
+				B20EC3462051D69A00649C94 /* Message.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -110,6 +120,7 @@
 			children = (
 				B27115D92050622700B37759 /* LoginManager.swift */,
 				B27115E4205102CE00B37759 /* FirebaseDatabaseManager.swift */,
+				B20EC3422051B23700649C94 /* ChatManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -136,6 +147,7 @@
 		B27AB636205040DA005AD577 /* FbbApp */ = {
 			isa = PBXGroup;
 			children = (
+				B20EC3482051D9E500649C94 /* Constants.swift */,
 				B27115E120506DA400B37759 /* Managers */,
 				B27115E020506D8900B37759 /* Data */,
 				B27115DE20506D4E00B37759 /* View */,
@@ -230,6 +242,8 @@
 				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/JSQMessagesViewController/JSQMessagesViewController.framework",
+				"${BUILT_PRODUCTS_DIR}/JSQSystemSoundPlayer/JSQSystemSoundPlayer.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
@@ -240,6 +254,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JSQMessagesViewController.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JSQSystemSoundPlayer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
@@ -289,12 +305,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				B27115DA2050622700B37759 /* LoginManager.swift in Sources */,
+				B20EC3492051D9E500649C94 /* Constants.swift in Sources */,
 				B27AB63A205040DA005AD577 /* LoginViewController.swift in Sources */,
 				B27115EB205135FD00B37759 /* UserTableViewCell.swift in Sources */,
 				B27115E92051223300B37759 /* UsersTableViewController.swift in Sources */,
 				B27115E5205102CE00B37759 /* FirebaseDatabaseManager.swift in Sources */,
 				B27115E320506FB800B37759 /* UserInfo.swift in Sources */,
 				B27AB638205040DA005AD577 /* AppDelegate.swift in Sources */,
+				B20EC3472051D69A00649C94 /* Message.swift in Sources */,
+				B20EC3452051CC5300649C94 /* ChatViewController.swift in Sources */,
+				B20EC3432051B23700649C94 /* ChatManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

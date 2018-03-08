@@ -42,12 +42,17 @@ class UserInfo {
         }
     }
     
+    var firebaseDBRef: DatabaseReference! {
+        guard !self.id.isEmpty else { return nil }
+        return Refs.usersReference.child(self.id)
+    }
+    
     func follow(user: UserInfo) {
-        FirebaseDatabaseManager.shared.user(user: self, followUser: user)
+        FirebaseDatabaseManager.user(user: self, followUser: user)
     }
     
     func unfollow(user: UserInfo) {
-        FirebaseDatabaseManager.shared.user(user: self, unfollowUser: user)
+        FirebaseDatabaseManager.user(user: self, unfollowUser: user)
     }
     
     func updateFallowings(ids: [String]) {
