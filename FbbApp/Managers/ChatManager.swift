@@ -21,8 +21,8 @@ class ChatManager {
         newParticipantListRef.child("chatID").setValue(newChatRef.key)
         newParticipantListRef.child("users").child(fromUser.id).setValue(fromUser.name)
         newParticipantListRef.child("users").child(toUser.id).setValue(toUser.name)
-        newChatRef.child("plist_id").setValue(newParticipantListRef.key)
-        //3. add chat data to users node
+        newChatRef.child("plistID").setValue(newParticipantListRef.key)
+        //3. add chat info to end users nodes
         fromUser.firebaseDBRef.child("chats").child(toUser.id).setValue(newParticipantListRef.key)
         toUser.firebaseDBRef.child("chats").child(fromUser.id).setValue(newParticipantListRef.key)
         return newChatRef
@@ -33,14 +33,8 @@ class ChatManager {
         newMessage.setValue(message.dictRepresentation)
     }
     
-//    func send(message: Message, toChatWith chatID: String) {
-//        let chatRef = self.chatReference.child(chatID).child("messages")
-//        let newMessage = chatRef.childByAutoId()
-//        newMessage.setValue(message.dictRepresentation)
-//    }
-    
-   static func makeChatConnection(fromUser: UserInfo, toUser: UserInfo,
-                                  comletion: @escaping (DatabaseReference) ->()) {
+    static func makeChatConnection(fromUser: UserInfo, toUser: UserInfo,
+                                   comletion: @escaping (DatabaseReference) ->()) {
         fromUser.firebaseDBRef.child("chats").child(toUser.id).observe(.value) { (snap) in
             if snap.exists() {
                 let chatPlistID  = snap.value as! String

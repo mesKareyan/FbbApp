@@ -6,7 +6,6 @@
 //  Copyright © 2018 Mesrop Kareyan. All rights reserved.
 //
 
-
 import Foundation
 import FBSDKLoginKit
 import FirebaseAuth
@@ -32,13 +31,15 @@ enum InternalError: Error {
 
 class LoginManager {
     
-    private init(){}
+    private init() {}
     static private(set) var currentUser: UserInfo! = nil
     
     static func loginWith(fbLoginResult: FBSDKLoginManagerLoginResult,
-                          completion: @escaping LoginCompletion) {
+                             completion: @escaping LoginCompletion) {
         DispatchQueue.main.async {
-            signInFirebase { result in completion(result) }
+            logInToFirebase(loginCompletion: { result in
+                completion(result)
+            })
         }
     }
     
@@ -58,7 +59,7 @@ class LoginManager {
         }
     }
     
-    private static func signInFirebase(loginCompletion:@escaping LoginCompletion) {
+    private static func logInToFirebase(loginCompletion:@escaping LoginCompletion) {
         let credential = FacebookAuthProvider.credential(withAccessToken:
             FBSDKAccessToken.current().tokenString)
         Auth.auth().signIn(with: credential) { (user, error) in
@@ -67,24 +68,22 @@ class LoginManager {
                 return
             }
             guard let firebaseUser = user else {
-            loginCompletion(.failure(InternalError.firebaseLoginError))
+                loginCompletion(.failure(InternalError.firebaseLoginError))
                 return
             }
             //get user data from Facebook
-            getFBInfoFor(firebaseUser: firebaseUser, completion: loginCompletion)
+            getFacebookInfoFor(firebaseUser: firebaseUser, completion: loginCompletion)
         }
     }
     
-    static func getFBInfoFor(firebaseUser: FirebaseAuth.User,
+    static func getFacebookInfoFor(firebaseUser: FirebaseAuth.User,
                                      completion:@escaping LoginCompletion) {
         getUserFacebookInfo() { result in
             switch result {
             case .failure(error: let error):
                 completion(.failure(error))
             case .success(data: let fbUserInfo):
-                FirebaseDatabaseManager
-                    .updateUserInfo(firebaseInfo: firebaseUser,facebookInfo: fbUserInfo)
-                    { userInfo in
+                FirebaseDBManager.updateUserInfo(firebaseInfo: firebaseUser,facebookInfo: fbUserInfo) { userInfo in
                         currentUser = userInfo
                         completion(.success(userInfo))
                 }
@@ -93,14 +92,17 @@ class LoginManager {
     }
     
     private static func getUserFacebookInfo(completion: @escaping RequestCompletion<UserInfo>) {
+        
         let parameters = ["fields": "email,name,picture.type(large)"]
         let graphRequest = FBSDKGraphRequest(graphPath: "me",
                                              parameters: parameters)!
+        
         graphRequest.start(completionHandler: { (connection, result, error) in
             if let error = error  {
                 completion(.failure(error: error))
             } else {
-                guard let resultDict = result as? NSDictionary,
+                guard
+                    let resultDict = result as? NSDictionary,
                     let name  = resultDict["name"] as? String,
                     let picInfo = resultDict["picture"] as? NSDictionary,
                     let picData = picInfo["data"] as? NSDictionary,

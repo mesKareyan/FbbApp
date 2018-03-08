@@ -7,5 +7,6 @@ target 'FbbApp' do
   pod 'Firebase/Auth'
   pod 'Firebase/Database'
   pod 'FBSDKLoginKit'
+  pod 'JSQMessagesViewController'
 
 end

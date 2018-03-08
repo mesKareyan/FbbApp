@@ -13,7 +13,7 @@
 		B20EC3492051D9E500649C94 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20EC3482051D9E500649C94 /* Constants.swift */; };
 		B27115DA2050622700B37759 /* LoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115D92050622700B37759 /* LoginManager.swift */; };
 		B27115E320506FB800B37759 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115E220506FB800B37759 /* UserInfo.swift */; };
-		B27115E5205102CE00B37759 /* FirebaseDatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115E4205102CE00B37759 /* FirebaseDatabaseManager.swift */; };
+		B27115E5205102CE00B37759 /* FirebaseDBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115E4205102CE00B37759 /* FirebaseDBManager.swift */; };
 		B27115E92051223300B37759 /* UsersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115E82051223300B37759 /* UsersTableViewController.swift */; };
 		B27115EB205135FD00B37759 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115EA205135FD00B37759 /* UserTableViewCell.swift */; };
 		B27AB638205040DA005AD577 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27AB637205040DA005AD577 /* AppDelegate.swift */; };
@@ -33,7 +33,7 @@
 		B20EC3482051D9E500649C94 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B27115D92050622700B37759 /* LoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginManager.swift; sourceTree = "<group>"; };
 		B27115E220506FB800B37759 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
-		B27115E4205102CE00B37759 /* FirebaseDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDatabaseManager.swift; sourceTree = "<group>"; };
+		B27115E4205102CE00B37759 /* FirebaseDBManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDBManager.swift; sourceTree = "<group>"; };
 		B27115E82051223300B37759 /* UsersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UsersTableViewController.swift; path = /Users/mesbook/Documents/FbbApp/FbbApp/Controller/UsersTableViewController.swift; sourceTree = "<absolute>"; };
 		B27115EA205135FD00B37759 /* UserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		B27AB634205040DA005AD577 /* FbbApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FbbApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -80,6 +80,9 @@
 		B27115DD20506D0D00B37759 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B20EC3482051D9E500649C94 /* Constants.swift */,
+				B27AB637205040DA005AD577 /* AppDelegate.swift */,
+				B27AB63E205040DA005AD577 /* Assets.xcassets */,
 				B27AB643205040DA005AD577 /* Info.plist */,
 				B27AB64920504223005AD577 /* GoogleService-Info.plist */,
 			);
@@ -119,7 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				B27115D92050622700B37759 /* LoginManager.swift */,
-				B27115E4205102CE00B37759 /* FirebaseDatabaseManager.swift */,
+				B27115E4205102CE00B37759 /* FirebaseDBManager.swift */,
 				B20EC3422051B23700649C94 /* ChatManager.swift */,
 			);
 			path = Managers;
@@ -147,13 +150,10 @@
 		B27AB636205040DA005AD577 /* FbbApp */ = {
 			isa = PBXGroup;
 			children = (
-				B20EC3482051D9E500649C94 /* Constants.swift */,
 				B27115E120506DA400B37759 /* Managers */,
 				B27115E020506D8900B37759 /* Data */,
 				B27115DE20506D4E00B37759 /* View */,
 				B27115DF20506D7100B37759 /* Controller */,
-				B27AB637205040DA005AD577 /* AppDelegate.swift */,
-				B27AB63E205040DA005AD577 /* Assets.xcassets */,
 			);
 			path = FbbApp;
 			sourceTree = "<group>";
@@ -309,7 +309,7 @@
 				B27AB63A205040DA005AD577 /* LoginViewController.swift in Sources */,
 				B27115EB205135FD00B37759 /* UserTableViewCell.swift in Sources */,
 				B27115E92051223300B37759 /* UsersTableViewController.swift in Sources */,
-				B27115E5205102CE00B37759 /* FirebaseDatabaseManager.swift in Sources */,
+				B27115E5205102CE00B37759 /* FirebaseDBManager.swift in Sources */,
 				B27115E320506FB800B37759 /* UserInfo.swift in Sources */,
 				B27AB638205040DA005AD577 /* AppDelegate.swift in Sources */,
 				B20EC3472051D69A00649C94 /* Message.swift in Sources */,

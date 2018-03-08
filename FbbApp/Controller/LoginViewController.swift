@@ -15,15 +15,17 @@ class LoginViewController: UIViewController {
     
     @IBOutlet weak var coverView: UIView!
     @IBOutlet weak var contentView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         createFBLoginButton()
         if let user = Auth.auth().currentUser {
             coverView.alpha = 1.0;
-            LoginManager.getFBInfoFor(firebaseUser: user, completion: { (result) in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+            //update info from facebook needed
+            LoginManager.getFacebookInfoFor(firebaseUser: user) { (result) in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     self.coverView.alpha = 0.0;
-                })
+                }
                 DispatchQueue.main.async {
                     switch result {
                     case .failure(let error):
@@ -32,14 +34,14 @@ class LoginViewController: UIViewController {
                         self.openUsersList(forUser: user)
                     }
                 }
-            })
+            }
         }
     }
     
     func createFBLoginButton() {
         let loginButton = FBSDKLoginButton()
         loginButton.delegate = self
-        loginButton.loginBehavior = .web
+        loginButton.loginBehavior = .native
         self.contentView.addSubview(loginButton)
         loginButton.translatesAutoresizingMaskIntoConstraints = false
         loginButton
@@ -51,21 +53,16 @@ class LoginViewController: UIViewController {
     }
     
     func showError(_ error: Error) {
-        let alert =
-            UIAlertController(title: "Error",
-                              message: error.localizedDescription,
-                              preferredStyle: .alert)
+        let alert = UIAlertController(title: "Error",
+                                      message: error.localizedDescription,
+                                      preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK",
                                       style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
     
     func openUsersList(forUser user: UserInfo) {
-       self.performSegue(withIdentifier: Segue.openUsersList.rawValue, sender: nil)
-    }
-    
-    // MARK: - Navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        self.performSegue(withIdentifier: Segue.openUsersList.rawValue, sender: nil)
     }
     
 }
@@ -93,22 +90,19 @@ extension LoginViewController: FBSDKLoginButtonDelegate {
         }
         //login to firebase
         LoginManager.loginWith(fbLoginResult: result) { (result) in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 self.coverView.alpha = 0.0;
-            })
-                switch result {
-                case .success(let user):
-                    self.openUsersList(forUser: user)
-                case .failure(let error):
-                    self.showError(error)
-                }
+            }
+            switch result {
+            case .success(let user):
+                self.openUsersList(forUser: user)
+            case .failure(let error):
+                self.showError(error)
+            }
         }
-        
     }
     
 }
-
-
 
 
 

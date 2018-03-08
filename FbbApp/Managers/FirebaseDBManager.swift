@@ -1,5 +1,5 @@
 //
-//  FirebaseDatabaseManager.swift
+//  FirebaseDBManager.swift
 //  FbbApp
 //
 //  Created by Mesrop Kareyan on 3/8/18.
@@ -30,27 +30,33 @@ struct Refs {
     
 }
 
-class FirebaseDatabaseManager {
+class FirebaseDBManager {
     
-
-    private init() {
-    }
-    
-    
+    private init() {}
     
     static func updateUserInfo(firebaseInfo: FirebaseAuth.User,
-                        facebookInfo: UserInfo,
-                        comletion:@escaping (_ updatedInfo: UserInfo) -> ()) {
-        user(forID: firebaseInfo.uid) { ref in
-            let newUserInfo = UserInfo(name: facebookInfo.name,
-                                       photoURL: facebookInfo.photoURL,
-                                       id: firebaseInfo.uid)
+                               facebookInfo: UserInfo,
+                                  comletion: @escaping (_ updatedInfo: UserInfo) -> ()) {
+        userReference(forID: firebaseInfo.uid) { ref in
+            let newUserInfo = UserInfo(name: facebookInfo.name,photoURL: facebookInfo.photoURL, id: firebaseInfo.uid)
             if ref == nil {
                 self.createUser(with: newUserInfo)
                 comletion(newUserInfo)
             } else {
                 self.updateUser(with: newUserInfo)
                 comletion(newUserInfo)
+            }
+        }
+    }
+    
+    
+    static func observeUserslist(newUser: @escaping (UserInfo) ->()) {
+        Refs.usersReference.observe(.childAdded) { (snap) in
+            if let user = UserInfo(snapshot: snap),
+                user.id != LoginManager.currentUser.id {
+                DispatchQueue.main.async {
+                    newUser(user)
+                }
             }
         }
     }
@@ -89,8 +95,7 @@ class FirebaseDatabaseManager {
         updateFollowings(userInfo: userInfo)
     }
 
-    private static func user(forID userUID: String,
-              result: @escaping ((DatabaseReference?) ->())) {
+    private static func userReference(forID userUID: String, result: @escaping ((DatabaseReference?) ->())) {
         Refs.usersReference.observeSingleEvent(of: .value) { (snap) in
             if snap.hasChild(userUID) {
                 //user is exists
@@ -103,28 +108,33 @@ class FirebaseDatabaseManager {
         }
     }
     
-    static func updateFollowings(userInfo: UserInfo) {
+    static func updateFollowings(userInfo: UserInfo, completion:(()->())? = nil) {
         let userRef = Refs.usersReference.child(userInfo.id)
         userRef.observeSingleEvent(of: .value) { (snapshot) in
             if let newUserInfo = UserInfo(snapshot: snapshot) {
                 userInfo.updateFallowings(ids: newUserInfo.followingIds)
+                if completion != nil {
+                    DispatchQueue.main.async {
+                        completion!()
+                    }
+                }
             }
         }
     }
     
-    static func user(user: UserInfo, followUser: UserInfo) {
+    static func user(user: UserInfo, followUser: UserInfo, completion:(()->())? = nil) {
         let userRef = Refs.usersReference.child(user.id)
         let followers = userRef.child(Refs.Path.followings)
         followers.child(followUser.id).setValue(followUser.name)
-        self.updateFollowings(userInfo: user)
+        self.updateFollowings(userInfo: user, completion: completion)
     }
     
-    static func user(user: UserInfo, unfollowUser: UserInfo) {
+    static func user(user: UserInfo, unfollowUser: UserInfo, completion:(()->())? = nil) {
         let userRef = Refs.usersReference.child(user.id)
         let followers = userRef.child(Refs.Path.followings)
         let unfollowRef = followers.child(unfollowUser.id)
         unfollowRef.removeValue()
-        self.updateFollowings(userInfo: user)
+        self.updateFollowings(userInfo: user, completion: completion)
     }
     
 }

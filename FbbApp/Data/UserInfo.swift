@@ -30,7 +30,8 @@ class UserInfo {
     }
         
     init?(snapshot: DataSnapshot) {
-        guard let data = snapshot.value as? NSDictionary,
+        guard
+            let data = snapshot.value as? NSDictionary,
             let name = data["name"] as? String,
             let photoURL = data["photo"] as? String
             else { return nil }
@@ -47,12 +48,12 @@ class UserInfo {
         return Refs.usersReference.child(self.id)
     }
     
-    func follow(user: UserInfo) {
-        FirebaseDatabaseManager.user(user: self, followUser: user)
+    func follow(user: UserInfo, completion:(()->())? = nil) {
+        FirebaseDBManager.user(user: self, followUser: user, completion: completion)
     }
     
-    func unfollow(user: UserInfo) {
-        FirebaseDatabaseManager.user(user: self, unfollowUser: user)
+    func unfollow(user: UserInfo, completion:(()->())? = nil) {
+        FirebaseDBManager.user(user: self, unfollowUser: user, completion: completion)
     }
     
     func updateFallowings(ids: [String]) {
