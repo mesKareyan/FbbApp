@@ -33,11 +33,32 @@ enum InternalError: Error {
 class LoginManager {
     
     private init(){}
+    static private(set) var currentUser: UserInfo! = nil
     
     static func loginWith(fbLoginResult: FBSDKLoginManagerLoginResult,
                           completion: @escaping LoginCompletion) {
-        signInFirebase { (result) in
-            completion(result)
+        DispatchQueue.main.async {
+            signInFirebase { result in completion(result) }
+        }
+    }
+    
+    static func loginWith(firebaseUser: FirebaseAuth.User) {
+        
+    }
+    
+    static func logOut(completion: @escaping LoginCompletion) {
+        let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+            FBSDKLoginManager().logOut()
+            FBSDKAccessToken.setCurrent(nil)
+            DispatchQueue.main.async {
+                completion(.success(currentUser))
+            }
+        } catch let signOutError as NSError {
+            DispatchQueue.main.async {
+                completion(.failure(signOutError))
+            }
         }
     }
     
@@ -50,21 +71,27 @@ class LoginManager {
                 return
             }
             guard let firebaseUser = user else {
-                loginCompletion(.failure(InternalError.firebaseLoginError))
+            loginCompletion(.failure(InternalError.firebaseLoginError))
                 return
             }
             //get user data from Facebook
-            getUserFacebookInfo() { result in
-                switch result {
-                case .failure(error: let error):
-                    loginCompletion(.failure(error))
-                case .success(data: let fbUserInfo):
-                    FirebaseDatabaseManager
-                        .shared
-                        .updateUserInfo(firebaseInfo: firebaseUser,facebookInfo: fbUserInfo)
-                        { userInfo in
-                            loginCompletion(.success(userInfo))
-                    }
+            getFBInfoFor(firebaseUser: firebaseUser, completion: loginCompletion)
+        }
+    }
+    
+    static func getFBInfoFor(firebaseUser: FirebaseAuth.User,
+                                     completion:@escaping LoginCompletion) {
+        getUserFacebookInfo() { result in
+            switch result {
+            case .failure(error: let error):
+                completion(.failure(error))
+            case .success(data: let fbUserInfo):
+                FirebaseDatabaseManager
+                    .shared
+                    .updateUserInfo(firebaseInfo: firebaseUser,facebookInfo: fbUserInfo)
+                    { userInfo in
+                        currentUser = userInfo
+                        completion(.success(userInfo))
                 }
             }
         }

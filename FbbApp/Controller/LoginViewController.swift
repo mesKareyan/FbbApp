@@ -11,12 +11,33 @@ import Firebase
 import FirebaseAuth
 import FBSDKLoginKit
 
+enum Segue: String {
+    case openUsersList
+}
+
 class LoginViewController: UIViewController {
     
+    @IBOutlet weak var coverView: UIView!
     @IBOutlet weak var contentView: UIView!
     override func viewDidLoad() {
         super.viewDidLoad()
         createFBLoginButton()
+        if let user = Auth.auth().currentUser {
+            coverView.alpha = 1.0;
+            LoginManager.getFBInfoFor(firebaseUser: user, completion: { (result) in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+                    self.coverView.alpha = 0.0;
+                })
+                DispatchQueue.main.async {
+                    switch result {
+                    case .failure(let error):
+                        self.showError(error)
+                    case .success(let user):
+                        self.openUsersList(forUser: user)
+                    }
+                }
+            })
+        }
     }
     
     func createFBLoginButton() {
@@ -43,7 +64,11 @@ class LoginViewController: UIViewController {
     }
     
     func openUsersList(forUser user: UserInfo) {
-        
+       self.performSegue(withIdentifier: Segue.openUsersList.rawValue, sender: nil)
+    }
+    
+    // MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     }
     
 }
@@ -53,26 +78,35 @@ extension LoginViewController: FBSDKLoginButtonDelegate {
     func loginButtonDidLogOut(_ loginButton: FBSDKLoginButton!) {
     }
     
+    func loginButtonWillLogin(_ loginButton: FBSDKLoginButton!) -> Bool {
+        coverView.alpha = 1.0;
+        return true
+    }
+    
     func loginButton(_ loginButton: FBSDKLoginButton!,
                      didCompleteWith result: FBSDKLoginManagerLoginResult!, error: Error?) {
         guard error == nil else {
+            self.coverView.alpha = 0.0;
             self.showError(error!)
             return
         }
         guard !result.isCancelled else {
+            self.coverView.alpha = 0.0;
             return
         }
         //login to firebase
         LoginManager.loginWith(fbLoginResult: result) { (result) in
-            DispatchQueue.main.async {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+                self.coverView.alpha = 0.0;
+            })
                 switch result {
                 case .success(let user):
                     self.openUsersList(forUser: user)
                 case .failure(let error):
                     self.showError(error)
                 }
-            }
         }
+        
     }
     
 }
