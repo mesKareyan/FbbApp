@@ -40,7 +40,7 @@ class UsersTableViewController: UITableViewController {
     }
     
     func loadUsers() {
-        FirebaseDBManager.observeUserslist(newUser: { (user) in
+        FirebaseDBManager.observeUsersList(newUser: { (user) in
             self.users.append(user)
             self.tableView.reloadData()
         })

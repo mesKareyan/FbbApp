@@ -21,7 +21,7 @@ class LoginViewController: UIViewController {
         createFBLoginButton()
         if let user = Auth.auth().currentUser {
             coverView.alpha = 1.0;
-            //update info from facebook needed
+            //update info from facebook if needed
             LoginManager.getFacebookInfoFor(firebaseUser: user) { (result) in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     self.coverView.alpha = 0.0;

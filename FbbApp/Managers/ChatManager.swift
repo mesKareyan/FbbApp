@@ -19,8 +19,10 @@ class ChatManager {
         //2. create new chat participants list node
         let newParticipantListRef = Refs.participantsListReference.childByAutoId()
         newParticipantListRef.child("chatID").setValue(newChatRef.key)
-        newParticipantListRef.child("users").child(fromUser.id).setValue(fromUser.name)
-        newParticipantListRef.child("users").child(toUser.id).setValue(toUser.name)
+        newParticipantListRef.child("users").child(fromUser.id)
+            .setValue(["user":fromUser.name, "isTyping" : false])
+        newParticipantListRef.child("users").child(toUser.id)
+            .setValue(["user":toUser.name, "isTyping" : false])
         newChatRef.child("plistID").setValue(newParticipantListRef.key)
         //3. add chat info to end users nodes
         fromUser.firebaseDBRef.child("chats").child(toUser.id).setValue(newParticipantListRef.key)
@@ -46,6 +48,21 @@ class ChatManager {
             } else {
                 let chatRef = self.createNewChat(from: fromUser, to: toUser)
                 comletion(chatRef)
+            }
+        }
+    }
+        
+    static func getParticipantsInfoRef(for user: UserInfo, toUser: UserInfo,
+                                       completion: @escaping (DatabaseReference?) -> ()) {
+        //update value in participantsList node
+        let pidRef = user.firebaseDBRef.child("chats").child(toUser.id)
+        pidRef.observeSingleEvent(of: .value) { (snap) in
+            if snap.exists() {
+                let pid = snap.value as! String
+                let ref = Refs.participantsListReference.child(pid)
+                completion(ref)
+            } else {
+                completion(nil)
             }
         }
     }

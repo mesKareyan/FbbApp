@@ -14,6 +14,9 @@ class ChatViewController: JSQMessagesViewController {
     
     var user: UserInfo!
     private(set) var chatRef: DatabaseReference!
+    private(set) var isCurrentUserTypingRef: DatabaseReference!
+    private(set) var isUserTypingRef: DatabaseReference!
+    
     private(set) var messages = [JSQMessage]()
     
     override func viewDidLoad() {
@@ -22,21 +25,25 @@ class ChatViewController: JSQMessagesViewController {
         configureForFirebase()
     }
     
-    // MARK: UITextViewDelegate methods
-    override func textViewDidChange(_ textView: UITextView) {
-        super.textViewDidChange(textView)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        observeTyping()
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.isCurrentUserTypingRef.child("isTyping").setValue(false)
+    }
+    
     // MARK: UI Configuration
     private func configureUI(){
         self.title = self.user.name
         self.senderDisplayName = self.user.name
         view.backgroundColor = UIColor.clear
-        collectionView.backgroundColor = .clear
         collectionView.backgroundColor = UIColor.groupTableViewBackground
         collectionView.typingIndicatorMessageBubbleColor = UIColor.white
         collectionView!.collectionViewLayout.incomingAvatarViewSize = CGSize(width: 30, height: 30)
         collectionView!.collectionViewLayout.outgoingAvatarViewSize = CGSize(width: 30, height: 30)
-        showTypingIndicator = true
         self.inputToolbar.tintColor = UIColor.jsq_messageBubbleBlue()
         let button = UIButton(type: .custom)
         button.setImage(#imageLiteral(resourceName: "coloredSent").withRenderingMode(.alwaysTemplate), for: .normal)
@@ -51,6 +58,22 @@ class ChatViewController: JSQMessagesViewController {
         ChatManager.makeChatConnection(fromUser: LoginManager.currentUser, toUser: self.user) { (ref) in
             self.chatRef = ref
             self.observeMessages()
+        }
+    }
+    
+    private func observeTyping() {
+        ChatManager.getParticipantsInfoRef(for: LoginManager.currentUser, toUser: user) {[weak self] (ref) in
+            if let ref = ref, let strongSelf = self {
+                strongSelf.isCurrentUserTypingRef = ref.child("users").child(LoginManager.currentUser.id)
+                strongSelf.isUserTypingRef = ref.child("users").child(strongSelf.user.id)
+                strongSelf.isCurrentUserTypingRef.child("isTyping").setValue(false)
+                strongSelf.isUserTypingRef.observe(.childChanged) { [weak self] (snap) in
+                    if let strongSelf = self {
+                        let val = snap.value as! Bool
+                        strongSelf.showTypingIndicator = val
+                    }
+                }
+            }
         }
     }
     
@@ -96,6 +119,21 @@ extension ChatViewController {
         cell.clipsToBounds = false
         return cell
     }
+    
+    override func collectionView(_ collectionView: JSQMessagesCollectionView!, attributedTextForCellBottomLabelAt indexPath: IndexPath!) -> NSAttributedString! {
+        let message = messages[indexPath.item]
+        let date = message.date as NSDate
+        if let timeAgo = date.formattedAsTimeAgo() {
+            let attrStr = NSAttributedString(string: timeAgo)
+            return attrStr
+        }
+        return nil
+    }
+    
+    override func collectionView(_ collectionView: JSQMessagesCollectionView!, layout collectionViewLayout: JSQMessagesCollectionViewFlowLayout!, heightForCellBottomLabelAt indexPath: IndexPath!) -> CGFloat {
+        return 20
+    }
+
 }
 
 //MARK: JSQMessages
@@ -124,6 +162,15 @@ extension ChatViewController {
         finishSendingMessage()
     }
     
+    // MARK: UITextViewDelegate methods
+    override func textViewDidChange(_ textView: UITextView) {
+        super.textViewDidChange(textView)
+        let isTyping = textView.text != ""
+        if self.isCurrentUserTypingRef != nil {
+            self.isCurrentUserTypingRef.child("isTyping").setValue(isTyping)
+        }
+    }
+    
     private func observeMessages() {
         let messageQuery = chatRef.queryLimited(toLast:25).queryOrdered(byChild: "date")
         let _ = messageQuery.observe(.childAdded, with: { (snapshot) -> () in
@@ -136,9 +183,16 @@ extension ChatViewController {
         })
     }
     
+   // showTypingIndicator = true
+
+    
     private func addMessage(_ message: Message) {
-        if let message = JSQMessage(senderId: message.senderID, displayName: "", text: message.text) {
-            messages.append(message)
+        let name = (message.senderID == senderId) ? user.name : LoginManager.currentUser.name
+        if let newMessage = JSQMessage(senderId: message.senderID,
+                                       senderDisplayName:name,
+                                       date: message.date,
+                                       text: message.text) {
+            messages.append(newMessage)
         }
     }
 

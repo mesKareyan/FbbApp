@@ -11,6 +11,7 @@
 		B20EC3452051CC5300649C94 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20EC3442051CC5300649C94 /* ChatViewController.swift */; };
 		B20EC3472051D69A00649C94 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20EC3462051D69A00649C94 /* Message.swift */; };
 		B20EC3492051D9E500649C94 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20EC3482051D9E500649C94 /* Constants.swift */; };
+		B228ADC320526E9F006143D5 /* NSDate+NVTimeAgo.m in Sources */ = {isa = PBXBuildFile; fileRef = B228ADC120526E9E006143D5 /* NSDate+NVTimeAgo.m */; };
 		B27115DA2050622700B37759 /* LoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115D92050622700B37759 /* LoginManager.swift */; };
 		B27115E320506FB800B37759 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115E220506FB800B37759 /* UserInfo.swift */; };
 		B27115E5205102CE00B37759 /* FirebaseDBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27115E4205102CE00B37759 /* FirebaseDBManager.swift */; };
@@ -31,6 +32,9 @@
 		B20EC3442051CC5300649C94 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		B20EC3462051D69A00649C94 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		B20EC3482051D9E500649C94 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		B228ADC020526E9E006143D5 /* FbbApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FbbApp-Bridging-Header.h"; sourceTree = "<group>"; };
+		B228ADC120526E9E006143D5 /* NSDate+NVTimeAgo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+NVTimeAgo.m"; sourceTree = "<group>"; };
+		B228ADC220526E9F006143D5 /* NSDate+NVTimeAgo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+NVTimeAgo.h"; sourceTree = "<group>"; };
 		B27115D92050622700B37759 /* LoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginManager.swift; sourceTree = "<group>"; };
 		B27115E220506FB800B37759 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		B27115E4205102CE00B37759 /* FirebaseDBManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDBManager.swift; sourceTree = "<group>"; };
@@ -150,12 +154,23 @@
 		B27AB636205040DA005AD577 /* FbbApp */ = {
 			isa = PBXGroup;
 			children = (
+				B27D1ACC20526D820027DA2E /* NSDate-Time-Ago */,
 				B27115E120506DA400B37759 /* Managers */,
 				B27115E020506D8900B37759 /* Data */,
 				B27115DE20506D4E00B37759 /* View */,
 				B27115DF20506D7100B37759 /* Controller */,
 			);
 			path = FbbApp;
+			sourceTree = "<group>";
+		};
+		B27D1ACC20526D820027DA2E /* NSDate-Time-Ago */ = {
+			isa = PBXGroup;
+			children = (
+				B228ADC220526E9F006143D5 /* NSDate+NVTimeAgo.h */,
+				B228ADC120526E9E006143D5 /* NSDate+NVTimeAgo.m */,
+				B228ADC020526E9E006143D5 /* FbbApp-Bridging-Header.h */,
+			);
+			path = "NSDate-Time-Ago";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -193,6 +208,7 @@
 				TargetAttributes = {
 					B27AB633205040DA005AD577 = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 0920;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -305,6 +321,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B27115DA2050622700B37759 /* LoginManager.swift in Sources */,
+				B228ADC320526E9F006143D5 /* NSDate+NVTimeAgo.m in Sources */,
 				B20EC3492051D9E500649C94 /* Constants.swift in Sources */,
 				B27AB63A205040DA005AD577 /* LoginViewController.swift in Sources */,
 				B27115EB205135FD00B37759 /* UserTableViewCell.swift in Sources */,
@@ -452,6 +469,7 @@
 			baseConfigurationReference = 58E89ACC6BDF15E96F948C3A /* Pods-FbbApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F4KF659SS5;
 				INFOPLIST_FILE = "$(SRCROOT)/Supporting Files/Info.plist";
@@ -459,6 +477,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = mesrop.kareyan.FbbApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "FbbApp/NSDate-Time-Ago/FbbApp-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -469,6 +489,7 @@
 			baseConfigurationReference = D46122079BF8B0103D8A68D0 /* Pods-FbbApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F4KF659SS5;
 				INFOPLIST_FILE = "$(SRCROOT)/Supporting Files/Info.plist";
@@ -476,6 +497,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = mesrop.kareyan.FbbApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "FbbApp/NSDate-Time-Ago/FbbApp-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

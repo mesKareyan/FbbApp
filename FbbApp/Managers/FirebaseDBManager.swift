@@ -49,8 +49,7 @@ class FirebaseDBManager {
         }
     }
     
-    
-    static func observeUserslist(newUser: @escaping (UserInfo) ->()) {
+    static func observeUsersList(newUser: @escaping (UserInfo) ->()) {
         Refs.usersReference.observe(.childAdded) { (snap) in
             if let user = UserInfo(snapshot: snap),
                 user.id != LoginManager.currentUser.id {
